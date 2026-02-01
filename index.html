@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>For Mema 💜</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+body{
+  margin:0;
+  height:100vh;
+  background:radial-gradient(circle at top,#e6ccff,#050008);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-family:"Poppins",sans-serif;
+  overflow:hidden;
+}
+
+/* ========== CARD ========== */
+.screen{
+  background:#ffe4f1;
+  padding:55px 60px;
+  border-radius:22px;
+  box-shadow:0 0 30px rgba(255,160,200,.6);
+  width:540px;
+  min-height:480px;
+  display:none;
+  text-align:center;
+  border:2px solid #ff9ecf;
+}
+.screen.active{display:block;}
+
+h1{font-size:32px;color:#000;}
+p{font-size:18px;color:#000;white-space:pre-line;}
+
+/* ========== IMAGES ========== */
+.first-img{
+  width:230px;
+  border-radius:16px;
+  margin-bottom:15px;
+}
+
+.second-gif{
+  width:240px;
+  border-radius:18px;
+  margin:15px 0;
+}
+
+/* ========== BUTTONS ========== */
+.buttons{position:relative;height:160px;}
+button{
+  padding:12px 28px;
+  font-size:18px;
+  border:none;
+  border-radius:30px;
+  cursor:pointer;
+  font-weight:600;
+}
+
+#yesBtn{
+  background:linear-gradient(135deg,#ffb6d9,#ff7bbd);
+  position:absolute;
+  left:25%;
+  top:50px;
+}
+#noBtn{
+  background:#111;
+  color:#fff;
+  position:absolute;
+  left:55%;
+  top:50px;
+}
+
+/* ========== HEARTS GAME ========== */
+.game-heart{
+  position:fixed;
+  top:-30px;
+  font-size:30px;
+  cursor:pointer;
+  animation:fallGame linear forwards;
+  z-index:9999;
+}
+@keyframes fallGame{to{transform:translateY(110vh);}}
+
+/* ========== CANDLE ========== */
+@keyframes flicker{
+  from{transform:scale(1);}
+  to{transform:scale(.85);}
+}
+
+.shake{
+  animation:shakeCandle .15s infinite;
+}
+@keyframes shakeCandle{
+  0%{transform:translateX(0);}
+  25%{transform:translateX(-2px);}
+  50%{transform:translateX(2px);}
+  75%{transform:translateX(-2px);}
+  100%{transform:translateX(0);}
+}
+
+/* Purple Smoke */
+.smoke{
+  position:absolute;
+  width:22px;
+  height:22px;
+  background:radial-gradient(circle,
+    rgba(255,210,255,.95),
+    rgba(200,140,255,.7),
+    rgba(160,90,230,.3)
+  );
+  border-radius:50%;
+  filter:blur(9px);
+  box-shadow:0 0 15px rgba(220,140,255,.9);
+  animation:smokeUp 4s ease-out forwards;
+}
+@keyframes smokeUp{
+  from{transform:translateY(0) scale(.7);opacity:1;}
+  to{transform:translateY(-120px) scale(2.6);opacity:0;}
+}
+
+/* Sparkles */
+.sparkle{
+  position:absolute;
+  font-size:14px;
+  color:#ffd6ff;
+  text-shadow:0 0 8px #ffb3ff;
+  animation:sparkleUp 2.5s ease-out forwards;
+}
+@keyframes sparkleUp{
+  from{transform:translateY(0) scale(1);opacity:1;}
+  to{transform:translateY(-60px) scale(1.8);opacity:0;}
+}
+
+/* Ending Hearts */
+.heart{
+  position:fixed;
+  top:-20px;
+  font-size:24px;
+  color:#ff7bbd;
+  pointer-events:none;
+  animation:fall 5s linear forwards;
+}
+@keyframes fall{to{transform:translateY(110vh);opacity:0;}}
+
+.game-info{
+  margin-top:15px;
+  font-size:18px;
+  font-weight:600;
+  color:#a21caf;
+}
+</style>
+</head>
+
+<body>
+
+<!-- MUSIC -->
+<audio id="bgMusic" src="music.mp3" loop></audio>
+<audio id="sadMusic" src="sad.mp3" loop></audio>
+
+
+<!-- ================= SCREEN 1 ================= -->
+<div class="screen active" id="screen1">
+
+  <img src="photo.png" class="first-img">
+
+  <h1>Mema, will you be my Valentine? 💜</h1>
+
+  <div class="buttons">
+    <button id="yesBtn">Yes ❤️</button>
+    <button id="noBtn">No 😢</button>
+  </div>
+
+  Attempts: <span id="attempts">0</span>
+  <div id="funMsg">Nice try 😏</div>
+
+</div>
+
+
+<!-- ================= SCREEN 2 ================= -->
+<div class="screen" id="screen2">
+
+  <h1>Catch My Heart 💜</h1>
+
+  <img src="love.gif" class="second-gif">
+
+  <p>Catch 15 hearts to unlock my message 💜</p>
+
+  <div class="game-info">
+    Score: <span id="score">0</span> / 15
+  </div>
+
+</div>
+
+
+<!-- ================= SCREEN 3 ================= -->
+<div class="screen" id="screen3">
+
+  <h1>One Last Wish 💕</h1>
+
+  <p>Blow the candle for my final message 🕯️</p>
+
+  <div id="candleGame">
+
+    <div id="candle" style="
+      margin:25px auto;
+      width:40px;
+      height:120px;
+      background:linear-gradient(#ffb3ff,#b300b3);
+      border-radius:10px;
+      position:relative;
+    ">
+
+      <div id="flame" style="
+        width:22px;
+        height:38px;
+        background:radial-gradient(circle,#fff7b2,orange,red);
+        border-radius:50%;
+        position:absolute;
+        top:-38px;
+        left:9px;
+        animation:flicker .15s infinite alternate;
+      "></div>
+
+    </div>
+
+    Blow Power: <span id="power">0</span>%
+    <br><br>
+
+    <button id="micBtn" onclick="startMic()">Start Blowing 🎤</button>
+
+    <p id="blowHint">Blow strong 😤💜</p>
+
+    <p id="finalMsg" style="
+      display:none;
+      margin-top:25px;
+      font-size:20px;
+      font-weight:600;
+      color:#a21caf;
+      white-space:pre-line;
+    "></p>
+
+  </div>
+
+</div>
+
+
+<script>
+
+// ================= BASIC =================
+const noBtn = document.getElementById("noBtn");
+const yesBtn = document.getElementById("yesBtn");
+
+const bgMusic = document.getElementById("bgMusic");
+const sadMusic = document.getElementById("sadMusic");
+
+const screen1 = document.getElementById("screen1");
+const screen2 = document.getElementById("screen2");
+const screen3 = document.getElementById("screen3");
+
+const attemptsText = document.getElementById("attempts");
+const funMsg = document.getElementById("funMsg");
+const scoreText = document.getElementById("score");
+
+const powerText = document.getElementById("power");
+const blowHint = document.getElementById("blowHint");
+const finalMsg = document.getElementById("finalMsg");
+
+const candle = document.getElementById("candle");
+const flame = document.getElementById("flame");
+
+let attempts = 0;
+let score = 0;
+let gameInterval = null;
+
+
+// Funny messages
+const funnyMessages=[
+  "Nice try 😏","Not happening 😂","Give up 💀",
+  "Still trying 😭","JUST CLICK YES 😤"
+];
+
+
+// NO button
+noBtn.addEventListener("mouseenter",()=>{
+
+  attempts++;
+  attemptsText.textContent = attempts;
+
+  funMsg.textContent =
+    funnyMessages[attempts % funnyMessages.length];
+
+  if(attempts>=6){
+    sadMusic.play().catch(()=>{});
+  }
+
+  noBtn.style.position="fixed";
+  noBtn.style.left=Math.random()*(innerWidth-120)+"px";
+  noBtn.style.top=Math.random()*(innerHeight-60)+"px";
+});
+
+
+// YES
+yesBtn.onclick=()=>{
+
+  sadMusic.pause();
+  sadMusic.currentTime=0;
+
+  bgMusic.currentTime=0;
+  bgMusic.play().catch(()=>{});
+
+  screen1.classList.remove("active");
+  screen2.classList.add("active");
+
+  startGame();
+};
+
+
+// ================= HEART GAME =================
+
+function startGame(){
+
+  score = 0;
+  scoreText.textContent = score;
+
+  gameInterval = setInterval(spawnHeart,800);
+}
+
+
+function spawnHeart(){
+
+  const h = document.createElement("div");
+  h.className="game-heart";
+  h.innerHTML="💜";
+
+  h.style.left=Math.random()*90+"vw";
+  h.style.animationDuration=(3+Math.random()*2)+"s";
+
+  document.body.appendChild(h);
+
+  h.onclick=()=>{
+
+    h.remove();
+    score++;
+
+    scoreText.textContent = score;
+
+    if(score>=15){
+      winGame();
+    }
+  };
+
+  setTimeout(()=>h.remove(),6000);
+}
+
+
+function winGame(){
+
+  clearInterval(gameInterval);
+
+  document.querySelectorAll(".game-heart").forEach(h=>h.remove());
+
+  screen2.classList.remove("active");
+  screen3.classList.add("active");
+}
+
+
+// ================= CANDLE MIC =================
+
+let audioContext, analyser, mic, dataArray;
+let blowPower = 0;
+let requiredPower = 160;
+let isBlown = false;
+
+
+function startMic(){
+
+  navigator.mediaDevices.getUserMedia({audio:true})
+  .then(stream=>{
+
+    audioContext=new AudioContext();
+    mic=audioContext.createMediaStreamSource(stream);
+    analyser=audioContext.createAnalyser();
+
+    analyser.fftSize=256;
+    mic.connect(analyser);
+
+    dataArray=new Uint8Array(analyser.frequencyBinCount);
+
+    listen();
+  });
+}
+
+
+function listen(){
+
+  if(isBlown) return;
+
+  analyser.getByteFrequencyData(dataArray);
+
+  let volume =
+    dataArray.reduce((a,b)=>a+b)/dataArray.length;
+
+  if(volume>60){
+
+    blowPower+=1.2;
+    candle.classList.add("shake");
+
+  }else{
+
+    blowPower=Math.max(0,blowPower-1.5);
+    candle.classList.remove("shake");
+  }
+
+  let percent=Math.min(100,
+    Math.floor(blowPower/requiredPower*100));
+
+  powerText.textContent = percent;
+
+  if(blowPower>=requiredPower) blowOut();
+
+  requestAnimationFrame(listen);
+}
+
+
+// Magic smoke
+function createSmoke(){
+
+  for(let i=0;i<10;i++){
+
+    let s=document.createElement("div");
+    s.className="smoke";
+
+    s.style.left=(8+Math.random()*24)+"px";
+    s.style.top="-18px";
+
+    candle.appendChild(s);
+
+    setTimeout(()=>s.remove(),4000);
+
+
+    let sp=document.createElement("div");
+    sp.className="sparkle";
+
+    sp.innerHTML=["✨","💜","💖","⭐"]
+      [Math.floor(Math.random()*4)];
+
+    sp.style.left=(5+Math.random()*30)+"px";
+    sp.style.top="-15px";
+
+    candle.appendChild(sp);
+
+    setTimeout(()=>sp.remove(),2500);
+  }
+}
+
+
+// Typewriter effect 💜
+function typeFinalMessage(text,speed=45){
+
+  finalMsg.style.display="block";
+  finalMsg.textContent="";
+
+  let i=0;
+
+  const interval=setInterval(()=>{
+
+    finalMsg.textContent+=text[i];
+    i++;
+
+    if(i>=text.length){
+      clearInterval(interval);
+    }
+
+  },speed);
+}
+
+
+function blowOut(){
+
+  isBlown = true;
+
+  candle.classList.remove("shake");
+
+  flame.style.display="none";
+
+  createSmoke();
+
+  blowHint.textContent="YOU DID IT 💜";
+
+  const finalText=`
+Mema 💜
+
+You are my forever 💜
+My heart is yours 💍
+I love you endlessly ❤️
+`;
+
+  setTimeout(()=>{
+
+    typeFinalMessage(finalText);
+    startHearts();
+
+  },1500);
+}
+
+
+// Ending hearts
+function startHearts(){
+
+  setInterval(()=>{
+
+    const h=document.createElement("div");
+    h.className="heart";
+    h.innerHTML="💜";
+
+    h.style.left=Math.random()*100+"vw";
+
+    document.body.appendChild(h);
+
+    setTimeout(()=>h.remove(),7000);
+
+  },220);
+}
+
+</script>
+
+</body>
+</html>
